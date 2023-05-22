@@ -1,9 +1,23 @@
+import 'package:scevor/auth/AccountPage.dart';
+import 'package:scevor/auth/LoginPage.dart';
+import 'package:scevor/auth/SplashPage.dart';
 import 'package:flutter/material.dart';
-import 'package:app/pages/Announcements.dart';
-import 'package:app/pages/LiveStream.dart';
-import 'package:app/pages/Map.dart';
+import 'package:scevor/pages/Announcements.dart';
+import 'package:scevor/pages/LiveStream.dart';
+import 'package:scevor/pages/PlaceMap.dart';
+import 'package:scevor/constants.dart';
 
-void main() {
+
+import 'package:supabase_flutter/supabase_flutter.dart';
+
+import 'decoratedButton.dart';
+
+Future<void> main() async {
+  WidgetsFlutterBinding.ensureInitialized();
+  await Supabase.initialize(
+    url: supabaseUrl,
+    anonKey: anonSupabaseKey,
+  );
   runApp(const Scevor());
 }
 
@@ -15,9 +29,16 @@ class Scevor extends StatelessWidget {
     return MaterialApp(
       title: 'Scevor',
       theme: ThemeData(
-        primarySwatch: Colors.blue,
+        useMaterial3: true,
       ),
-      home: const HomePage(title: 'School Event Organizer'),
+      //home: const SplashPage(),
+      initialRoute: '/',
+      routes: <String, WidgetBuilder>{
+        '/': (_) => const SplashPage(),
+        '/login': (_) => const LoginPage(),
+        '/account': (_) => const AccountPage(),
+        '/home': (_) => const HomePage(title: "School Event Organizer")
+      },
     );
   }
 }
@@ -32,26 +53,17 @@ class HomePage extends StatefulWidget {
 }
 
 class _HomePageState extends State<HomePage> {
+  final _sections = supabase.from("test").select().eq("user_id", userId).select<List<Map<String, dynamic>>>("sections");
+
   @override
   Widget build(BuildContext context) {
-    double width = MediaQuery.of(context).size.width;
-    int cols = 1;
-    if (width > 400) cols = 2;
-    if (width > 650) cols = 3;
-    if (width > 1080) cols = 4;
-    if (width > 1400) cols = 5;
-
     return Scaffold(
       appBar: AppBar(
-        title: Text(widget.title),
+        elevation: 4,
         actions: <Widget>[
           IconButton(
             onPressed: () {
-              Navigator.push(
-                context,
-                MaterialPageRoute(
-                    builder: (context) => TestScreen("l'icona dell'account")),
-              );
+              Navigator.pushReplacementNamed(context, "/account");
             },
             icon: const Image(
               image: NetworkImage("https://placekitten.com/50/50"),
@@ -80,46 +92,13 @@ class _HomePageState extends State<HomePage> {
                 );
               },
             ),
-            /*ListTile(
-              title: const Text('Chat diretta'),
-              onTap: () {
-                Navigator.pop(context);
-                Navigator.push(
-                  context,
-                  MaterialPageRoute(
-                      builder: (context) => TestScreen("Chat diretta")),
-                );
-              },
-            ),
-            ListTile(
-              title: const Text('Chat gruppo 1'),
-              onTap: () {
-                Navigator.pop(context);
-                Navigator.push(
-                  context,
-                  MaterialPageRoute(
-                      builder: (context) => TestScreen("Chat gruppo 1")),
-                );
-              },
-            ),
-            ListTile(
-              title: const Text('Chat gruppo 2'),
-              onTap: () {
-                Navigator.pop(context);
-                Navigator.push(
-                  context,
-                  MaterialPageRoute(
-                      builder: (context) => TestScreen("Chat gruppo 2")),
-                );
-              },
-            ),*/
             ListTile(
               title: const Text('Mappa'),
               onTap: () {
                 Navigator.pop(context);
                 Navigator.push(
                   context,
-                  MaterialPageRoute(builder: (context) => const Map()),
+                  MaterialPageRoute(builder: (context) => const PlaceMap()),
                 );
               },
             ),
@@ -136,71 +115,32 @@ class _HomePageState extends State<HomePage> {
           ],
         ),
       ),
-      body: Center(
-          child: GridView.count(
-        primary: false,
-        padding: const EdgeInsets.all(20),
-        crossAxisSpacing: 10,
-        mainAxisSpacing: 10,
-        crossAxisCount: cols,
-        children: const <Widget>[
-          DecoratedButton(
-              text: "Annunci",
-              icon: Icon(Icons.campaign_rounded),
-              screen: Announcements()),
-          /*DecoratedButton(
-              text: "Chat diretta",
-              icon: Icon(Icons.chat_rounded),
-              screen: TestScreen("Chat diretta")),
-          DecoratedButton(
-              text: "Chat gruppo 1",
-              icon: Icon(Icons.chat_rounded),
-              screen: TestScreen("Chat gruppo 1")),
-          DecoratedButton(
-              text: "Chat gruppo 2",
-              icon: Icon(Icons.chat_rounded),
-              screen: TestScreen("Chat gruppo 2")),*/
-          DecoratedButton(text: "Mappa", icon: Icon(Icons.map), screen: Map()),
-          DecoratedButton(
-              text: "Live Stream",
-              icon: Icon(Icons.live_tv),
-              screen: LiveStream()),
-        ],
-      )),
-    );
-  }
-}
 
-//--------------------------
-
-class TestScreen extends StatelessWidget {
-  final String clicked;
-
-  const TestScreen(this.clicked, {super.key});
-
-  @override
-  Widget build(BuildContext context) {
-    return Scaffold(
-      appBar: AppBar(
-        leading: IconButton(
-            onPressed: () {
-              Navigator.pop(context);
-            },
-            icon: const Icon(Icons.arrow_back)),
-        title: const Text('Test Screen'),
-      ),
-      body: Center(
-        child: ElevatedButton(
-          child: Text('Hai cliccato $clicked'),
-          onPressed: () {
-            Navigator.pop(context);
-          },
-        ),
+      body: FutureBuilder<List<Map<String, dynamic>>>(
+        future: _sections,
+        builder: (context, snapshot) {
+          if (!snapshot.hasData) {
+            return const Center(child: CircularProgressIndicator());
+          }
+          final sections = snapshot.data!.elementAt(0).values.toList().first;
+          return ListView.builder(
+            itemCount: sections.length,
+            itemBuilder: ((context, index) {
+              final sec = sections[index];
+              final page = pages.firstWhere((p) => p.keys.first == sec.toString()).values.elementAt(0);
+              return DecoratedButton(
+                  text: page.elementAt(0).toString(),
+                  icon: Icon(page.elementAt(1) as IconData),
+                  screen: page.elementAt(2) as Widget
+              );
+            }),
+          );
+        },
       ),
     );
   }
 }
-
+/*
 class DecoratedButton extends StatelessWidget {
   final String text;
   final Icon icon;
@@ -253,3 +193,4 @@ class DecoratedButton extends StatelessWidget {
     );
   }
 }
+*/

@@ -5,11 +5,12 @@ class DecoratedButton extends StatelessWidget {
   final Icon icon;
   final Widget screen;
 
-  const DecoratedButton(
-      {super.key,
-      required this.text,
-      required this.icon,
-      required this.screen});
+  const DecoratedButton({
+    super.key,
+    required this.text,
+    required this.icon,
+    required this.screen
+  });
 
   @override
   Widget build(BuildContext context) {

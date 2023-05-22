@@ -1,11 +1,11 @@
 {
-    "name": "app",
-    "short_name": "app",
+    "name": "scevor",
+    "short_name": "scevor",
     "start_url": ".",
     "display": "standalone",
     "background_color": "#0175C2",
     "theme_color": "#0175C2",
-    "description": "School event organizer",
+    "description": "School Event Organizer",
     "orientation": "portrait-primary",
     "prefer_related_applications": false,
     "icons": [
