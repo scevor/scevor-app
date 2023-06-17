@@ -19,7 +19,7 @@ jobs:
       - name: 'Setup flutter'
         uses: subosito/flutter-action@v2
         with:
-          flutter-version: '3.7.7'
+          flutter-version: '3.10.0'
           
       - name: 'Get deps and retrieve secrets'    
         run: flutter pub get
