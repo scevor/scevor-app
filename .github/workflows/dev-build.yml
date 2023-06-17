@@ -30,4 +30,4 @@ jobs:
         run: flutter build apk --dart-define SUPABASE_ANONKEY=$ANON
         
       - name: 'Build web'  
-      - run: flutter build web
+        run: flutter build web
