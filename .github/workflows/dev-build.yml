@@ -30,4 +30,16 @@ jobs:
         run: flutter build apk --dart-define SUPABASE_ANONKEY=$ANON
         
       - name: 'Build web'  
-        run: flutter build web
+        run: flutter build web --dart-define SUPABASE_ANONKEY=$ANON
+        
+      - name: 'Upload apk artifacts'  
+        uses: actions/upload-artifact@v3
+        with:
+            name: android-build
+            path: build/app/outputs/flutter-apk/
+            
+      - name: 'Upload web artifacts'  
+        uses: actions/upload-artifact@v3
+        with:
+            name: android-build
+            path: web/
