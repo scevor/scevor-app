@@ -1,0 +1,23 @@
+name: 'Build development apk and web'
+on:
+  push:
+    branches:
+      - development
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v3
+      - uses: actions/setup-java@v2
+        with:
+          distribution: 'zulu'
+          java-version: '11'
+      - uses: subosito/flutter-action@v2
+        with:
+          flutter-version: '3.7.7'
+      - run: flutter pub get
+      - run: flutter test
+      - env:
+          ANON: ${{ secrets.SUPABASE_ANONKEY }}
+      - run: flutter build apk --dart-define SUPABASE_ANONKEY=$ANON
+      - run: flutter build web
