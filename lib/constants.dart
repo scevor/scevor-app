@@ -5,7 +5,6 @@ import 'package:flutter/material.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
 
 const supabaseUrl = 'https://qmtgppnbibzqrgenmvpe.supabase.co';
-const anonSupabaseKey = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InFtdGdwcG5iaWJ6cXJnZW5tdnBlIiwicm9sZSI6ImFub24iLCJpYXQiOjE2ODQ1OTE0NDAsImV4cCI6MjAwMDE2NzQ0MH0.6sjMANmw4VMTIwaA1oOjzcFeXSo4qsQklbUzqTpms0I';
 
 final supabase = Supabase.instance.client;
 final userId = supabase.auth.currentUser!.id;
