@@ -7,7 +7,6 @@ import 'package:scevor/pages/LiveStream.dart';
 import 'package:scevor/pages/PlaceMap.dart';
 import 'package:scevor/constants.dart';
 
-
 import 'package:supabase_flutter/supabase_flutter.dart';
 
 import 'decoratedButton.dart';
@@ -16,7 +15,7 @@ Future<void> main() async {
   WidgetsFlutterBinding.ensureInitialized();
   await Supabase.initialize(
     url: supabaseUrl,
-    anonKey: anonSupabaseKey,
+    anonKey: const String.fromEnvironment('SUPABASE_ANONKEY'),
   );
   runApp(const Scevor());
 }
@@ -53,7 +52,7 @@ class HomePage extends StatefulWidget {
 }
 
 class _HomePageState extends State<HomePage> {
-  final _sections = supabase.from("test").select().eq("user_id", userId).select<List<Map<String, dynamic>>>("sections");
+  final _sections = supabase.from("profile_data").select().eq("user_id", userId).select<List<Map<String, dynamic>>>("sections");
 
   @override
   Widget build(BuildContext context) {
