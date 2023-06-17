@@ -6,11 +6,7 @@ on:
 jobs:
   build:
     runs-on: ubuntu-latest
-    steps:
-      - name: 'Retrieve secret from secrets'
-        env:
-          ANON: ${{ secrets.SUPABASE_ANONKEY }}
-          
+    steps:      
       - name: 'Checkout'
         uses: actions/checkout@v3
         
@@ -25,8 +21,10 @@ jobs:
         with:
           flutter-version: '3.7.7'
           
-      - name: 'Get deps'    
+      - name: 'Get deps and retrieve secrets'    
         run: flutter pub get
+        env:
+          ANON: ${{ secrets.SUPABASE_ANONKEY }}
       
       - name: 'Build apk'
         run: flutter build apk --dart-define SUPABASE_ANONKEY=$ANON
