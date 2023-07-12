@@ -2,10 +2,11 @@ import 'package:scevor/auth/AccountPage.dart';
 import 'package:scevor/auth/LoginPage.dart';
 import 'package:scevor/auth/SplashPage.dart';
 import 'package:flutter/material.dart';
-import 'package:scevor/pages/Announcements.dart';
+import 'package:scevor/pages/announcements/announcements.dart';
 import 'package:scevor/pages/LiveStream.dart';
 import 'package:scevor/pages/PlaceMap.dart';
 import 'package:scevor/constants.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 
 import 'package:supabase_flutter/supabase_flutter.dart';
 
@@ -13,10 +14,14 @@ import 'decoratedButton.dart';
 
 Future<void> main() async {
   WidgetsFlutterBinding.ensureInitialized();
+
+  prefs = await SharedPreferences.getInstance();
+
   await Supabase.initialize(
-    url: supabaseUrl,
-    anonKey: const String.fromEnvironment('SUPABASE_ANONKEY'),
+      url: const String.fromEnvironment('SUPABASE_URL'),
+      anonKey: const String.fromEnvironment('SUPABASE_ANONKEY')
   );
+
   runApp(const Scevor());
 }
 
@@ -62,7 +67,7 @@ class _HomePageState extends State<HomePage> {
         actions: <Widget>[
           IconButton(
             onPressed: () {
-              Navigator.pushReplacementNamed(context, "/account");
+              Navigator.pushNamed(context, "/account");
             },
             icon: const Image(
               image: NetworkImage("https://placekitten.com/50/50"),

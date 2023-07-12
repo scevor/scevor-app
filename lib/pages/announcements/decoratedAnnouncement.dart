@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:scevor/Announcement.dart';
+import 'package:scevor/pages/announcements/announcement.dart';
 
 class DecoratedAnnouncement extends StatelessWidget {
   final Announcement ann;

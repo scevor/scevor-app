@@ -28,6 +28,9 @@ class _LoginPageState extends State<LoginPage> {
         email: _emailController.text.trim(),
         password: _passwordController.text.trim(),
       );
+
+      await supabase.from('profile_data').select("role").eq("user_id", userId).limit(1).single().then((value) => prefs.setInt("role", (value as Map).values.first));
+
       if (mounted) {
         _emailController.clear();
         _passwordController.clear();
@@ -69,7 +72,7 @@ class _LoginPageState extends State<LoginPage> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(title: const Text('Sign In')),
+      appBar: AppBar(title: const Text('Entra in Scevor')),
       body: ListView(
         padding: const EdgeInsets.symmetric(vertical: 18, horizontal: 12),
         children: [
